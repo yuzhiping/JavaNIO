@@ -38,6 +38,8 @@ public class SystemInfo {
 
         // 当前可用的总空间
         System.out.println("total mem=" + Runtime.getRuntime().totalMemory() / 1024.0 / 1024 + "M");
+
+        System.out.println(System.getProperty("user.dir"));
     }
 
 }
