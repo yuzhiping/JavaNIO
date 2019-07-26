@@ -13,11 +13,17 @@
  *	See the License for the specific language governing permissions and
  *	limitations under the License.
  */
-package com.github.hexsmith.netty;
+package com.github.hexsmith.netty.server.handler;
+
+import com.github.hexsmith.netty.protocol.AbstractPacket;
+import com.github.hexsmith.netty.protocol.PacketCodeC;
+import com.github.hexsmith.netty.protocol.request.LoginRequestPacket;
+import com.github.hexsmith.netty.protocol.response.LoginResponsePacket;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import io.netty.buffer.ByteBuf;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.ChannelInboundHandlerAdapter;
 
@@ -48,4 +54,29 @@ public class ServerHandler extends ChannelInboundHandlerAdapter {
         LOGGER.info("handlerAdded");
     }
 
+    @Override
+    public void channelRead(ChannelHandlerContext ctx, Object msg) throws Exception {
+        ByteBuf requestByteBuf = (ByteBuf) msg;
+        AbstractPacket packet = PacketCodeC.INSTANCE.decode(requestByteBuf);
+        if (packet instanceof LoginRequestPacket) {
+            LoginRequestPacket loginRequestPacket = (LoginRequestPacket) packet;
+            LoginResponsePacket loginResponsePacket = new LoginResponsePacket();
+            if (valid(loginRequestPacket)) {
+                // 校验成功
+                LOGGER.info("登录成功");
+                loginResponsePacket.setSuccess(true);
+            } else {
+                // 校验失败
+                LOGGER.info("登录失败");
+                loginResponsePacket.setSuccess(false);
+                loginResponsePacket.setReason("账号密码校验失败");
+                ByteBuf responseByteBuf = PacketCodeC.INSTANCE.encode(ctx.alloc(), loginResponsePacket);
+                ctx.channel().writeAndFlush(responseByteBuf);
+            }
+        }
+    }
+
+    private boolean valid(LoginRequestPacket loginRequestPacket) {
+        return true;
+    }
 }

@@ -13,7 +13,11 @@
  *	See the License for the specific language governing permissions and
  *	limitations under the License.
  */
-package com.github.hexsmith.netty;
+package com.github.hexsmith.netty.server;
+
+import com.github.hexsmith.netty.client.NettyClient;
+import com.github.hexsmith.netty.server.handler.ServerChildHandler;
+import com.github.hexsmith.netty.server.handler.ServerHandler;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

@@ -1,4 +1,4 @@
-package com.github.hexsmith.netty.protocol.support;
+package com.github.hexsmith.netty.protocol.response;
 
 import com.github.hexsmith.netty.protocol.AbstractPacket;
 import com.github.hexsmith.netty.protocol.Command;
@@ -9,17 +9,15 @@ import lombok.Setter;
 /**
  * @author hexsmith
  * @version v1.0
- * @since 2019-07-26 15:37
+ * @since 2019-07-26 17:43
  */
-@Getter
 @Setter
-public class LoginRequestPacket extends AbstractPacket {
+@Getter
+public class LoginResponsePacket extends AbstractPacket {
 
-    private Long userId;
+    public boolean success;
 
-    private String username;
-
-    private String password;
+    private String reason;
 
     /**
      * 指令
@@ -28,6 +26,6 @@ public class LoginRequestPacket extends AbstractPacket {
      */
     @Override
     public Byte getCommand() {
-        return Command.LOGIN_REQUEST;
+        return Command.LOGIN_RESPONSE;
     }
 }

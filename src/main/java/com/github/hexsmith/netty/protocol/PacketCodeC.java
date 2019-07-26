@@ -1,7 +1,8 @@
 package com.github.hexsmith.netty.protocol;
 
+import com.github.hexsmith.netty.protocol.request.LoginRequestPacket;
+import com.github.hexsmith.netty.protocol.response.LoginResponsePacket;
 import com.github.hexsmith.netty.protocol.support.JOSNSerializer;
-import com.github.hexsmith.netty.protocol.support.LoginRequestPacket;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -22,9 +23,12 @@ public class PacketCodeC {
 
     private static final Map<Byte, Serializer> SERIALIZER_MAP;
 
+    public static final PacketCodeC INSTANCE = new PacketCodeC();
+
     static {
         PACKET_TYPE_MAP = new HashMap<>(1 << 4);
         PACKET_TYPE_MAP.put(Command.LOGIN_REQUEST, LoginRequestPacket.class);
+        PACKET_TYPE_MAP.put(Command.LOGIN_RESPONSE, LoginResponsePacket.class);
 
         SERIALIZER_MAP = new HashMap<>(1 << 4);
         Serializer serializer = new JOSNSerializer();
@@ -34,6 +38,21 @@ public class PacketCodeC {
     public ByteBuf encode(AbstractPacket packet) {
         // 1、创建ByteBuf 对象
         ByteBuf byteBuf = ByteBufAllocator.DEFAULT.ioBuffer();
+        // 2、序列化数据包
+        byte[] bytes = Serializer.DEFAULT.serialize(packet);
+        // 3、实际编码过程
+        byteBuf.writeInt(MAGIC_NUMBER);
+        byteBuf.writeByte(packet.getVersion());
+        byteBuf.writeByte(Serializer.DEFAULT.getSerializerAlgorithm());
+        byteBuf.writeByte(packet.getCommand());
+        byteBuf.writeInt(bytes.length);
+        byteBuf.writeBytes(bytes);
+        return byteBuf;
+    }
+
+    public ByteBuf encode(ByteBufAllocator byteBufAllocator, AbstractPacket packet) {
+        // 1、创建ByteBuf 对象
+        ByteBuf byteBuf = byteBufAllocator.ioBuffer();
         // 2、序列化数据包
         byte[] bytes = Serializer.DEFAULT.serialize(packet);
         // 3、实际编码过程

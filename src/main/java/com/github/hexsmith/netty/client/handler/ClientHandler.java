@@ -13,11 +13,17 @@
  *	See the License for the specific language governing permissions and
  *	limitations under the License.
  */
-package com.github.hexsmith.netty;
+package com.github.hexsmith.netty.client.handler;
+
+import com.github.hexsmith.netty.protocol.AbstractPacket;
+import com.github.hexsmith.netty.protocol.PacketCodeC;
+import com.github.hexsmith.netty.protocol.request.LoginRequestPacket;
+import com.github.hexsmith.netty.protocol.response.LoginResponsePacket;
 
 import java.nio.charset.StandardCharsets;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.util.UUID;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -52,7 +58,28 @@ public class ClientHandler extends ChannelInboundHandlerAdapter {
     @Override
     public void channelRead(ChannelHandlerContext ctx, Object msg) throws Exception {
         ByteBuf byteBuf = (ByteBuf) msg;
-
         System.out.println(LocalDateTime.now() + ": 客户端读到数据 -> " + byteBuf.toString(StandardCharsets.UTF_8));
+        AbstractPacket packet = PacketCodeC.INSTANCE.decode(byteBuf);
+        if (packet instanceof LoginResponsePacket) {
+            LoginResponsePacket loginResponsePacket = (LoginResponsePacket) packet;
+            if (loginResponsePacket.isSuccess()) {
+                LOGGER.info(LocalDateTime.now() + ": 客户端登录成功");
+            } else {
+                LOGGER.error(LocalDateTime.now() + "：客户端登录失败，原因：" + loginResponsePacket.getReason());
+            }
+        }
+    }
+
+    @Override
+    public void channelActive(ChannelHandlerContext ctx) throws Exception {
+        LOGGER.info(LocalDateTime.now() + ": 客户端开始登陆");
+        LoginRequestPacket loginRequestPacket = new LoginRequestPacket();
+        loginRequestPacket.setUserId(UUID.randomUUID().toString());
+        loginRequestPacket.setUsername("hexsmith");
+        loginRequestPacket.setPassword("root");
+        // 编码
+        ByteBuf byteBuf = PacketCodeC.INSTANCE.encode(loginRequestPacket);
+        // 写数据
+        ctx.channel().writeAndFlush(byteBuf);
     }
 }

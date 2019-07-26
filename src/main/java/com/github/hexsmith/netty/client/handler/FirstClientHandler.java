@@ -1,4 +1,4 @@
-package com.github.hexsmith.netty;
+package com.github.hexsmith.netty.client.handler;
 
 import java.nio.charset.StandardCharsets;
 import java.time.LocalDateTime;

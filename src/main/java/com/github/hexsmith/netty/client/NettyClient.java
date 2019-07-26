@@ -13,7 +13,9 @@
  *	See the License for the specific language governing permissions and
  *	limitations under the License.
  */
-package com.github.hexsmith.netty;
+package com.github.hexsmith.netty.client;
+
+import com.github.hexsmith.netty.client.handler.ClientHandler;
 
 import java.util.Date;
 import java.util.concurrent.TimeUnit;
