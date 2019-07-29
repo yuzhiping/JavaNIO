@@ -18,7 +18,11 @@ package com.github.hexsmith.netty.server.handler;
 import com.github.hexsmith.netty.protocol.AbstractPacket;
 import com.github.hexsmith.netty.protocol.PacketCodeC;
 import com.github.hexsmith.netty.protocol.request.LoginRequestPacket;
+import com.github.hexsmith.netty.protocol.request.MessageRequestPacket;
 import com.github.hexsmith.netty.protocol.response.LoginResponsePacket;
+import com.github.hexsmith.netty.protocol.response.MessageResponsePacket;
+
+import java.time.LocalDateTime;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -70,9 +74,17 @@ public class ServerHandler extends ChannelInboundHandlerAdapter {
                 LOGGER.info("登录失败");
                 loginResponsePacket.setSuccess(false);
                 loginResponsePacket.setReason("账号密码校验失败");
-                ByteBuf responseByteBuf = PacketCodeC.INSTANCE.encode(ctx.alloc(), loginResponsePacket);
-                ctx.channel().writeAndFlush(responseByteBuf);
             }
+            ByteBuf responseByteBuf = PacketCodeC.INSTANCE.encode(ctx.alloc(), loginResponsePacket);
+            ctx.channel().writeAndFlush(responseByteBuf);
+        } else if (packet instanceof MessageRequestPacket) {
+            // 处理消息
+            MessageRequestPacket messageRequestPacket = (MessageRequestPacket) packet;
+            LOGGER.info(LocalDateTime.now() + " :收到客户端消息：" + messageRequestPacket.getMessage());
+            MessageResponsePacket messageResponsePacket = new MessageResponsePacket();
+            messageResponsePacket.setMessage("服务端回复消息 【" + messageRequestPacket.getMessage() + "】");
+            ByteBuf byteBuf = PacketCodeC.INSTANCE.encode(ctx.alloc(), messageResponsePacket);
+            ctx.channel().writeAndFlush(byteBuf);
         }
     }
 

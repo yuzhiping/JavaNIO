@@ -5,11 +5,11 @@
     <modelVersion>4.0.0</modelVersion>
 
     <groupId>com.github.hexsmith</groupId>
-    <artifactId>JavaNIO</artifactId>
+    <artifactId>java-nio</artifactId>
     <version>1.0-SNAPSHOT</version>
     <packaging>jar</packaging>
 
-    <name>JavaNIO</name>
+    <name>java-nio</name>
     <description>Demo project for Netty</description>
 
     <developers>
@@ -59,6 +59,12 @@
             <groupId>org.projectlombok</groupId>
             <artifactId>lombok</artifactId>
             <version>1.18.8</version>
+        </dependency>
+
+        <dependency>
+            <groupId>com.google.guava</groupId>
+            <artifactId>guava</artifactId>
+            <version>20.0</version>
         </dependency>
 
     </dependencies>

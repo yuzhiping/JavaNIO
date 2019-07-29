@@ -16,7 +16,6 @@
 package com.github.hexsmith.netty.server;
 
 import com.github.hexsmith.netty.client.NettyClient;
-import com.github.hexsmith.netty.server.handler.ServerChildHandler;
 import com.github.hexsmith.netty.server.handler.ServerHandler;
 
 import org.slf4j.Logger;
@@ -24,14 +23,11 @@ import org.slf4j.LoggerFactory;
 
 import io.netty.bootstrap.ServerBootstrap;
 import io.netty.channel.ChannelFuture;
-import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.ChannelInitializer;
 import io.netty.channel.ChannelOption;
-import io.netty.channel.SimpleChannelInboundHandler;
 import io.netty.channel.nio.NioEventLoopGroup;
 import io.netty.channel.socket.nio.NioServerSocketChannel;
 import io.netty.channel.socket.nio.NioSocketChannel;
-import io.netty.handler.codec.string.StringDecoder;
 import io.netty.util.AttributeKey;
 
 /**
@@ -44,24 +40,24 @@ public class NettyServer {
     private static final Logger LOGGER = LoggerFactory.getLogger(NettyClient.class);
 
     public static void main(String[] args) throws InterruptedException {
-        ServerBootstrap serverBootstrap = new ServerBootstrap();
+        final ServerBootstrap serverBootstrap = new ServerBootstrap();
         NioEventLoopGroup boss = new NioEventLoopGroup();
         NioEventLoopGroup worker = new NioEventLoopGroup();
         try {
             serverBootstrap.group(boss, worker).channel(NioServerSocketChannel.class)
                 .childOption(ChannelOption.TCP_NODELAY, true)
-                .childAttr(AttributeKey.newInstance("childAttr"), "childValue").handler(new ServerHandler())
+                .childAttr(AttributeKey.newInstance("childAttr"), "childValue")
                 .childHandler(new ChannelInitializer<NioSocketChannel>() {
                     @Override
                     protected void initChannel(NioSocketChannel nioSocketChannel) {
-                        nioSocketChannel.pipeline().addLast(new StringDecoder());
-                        nioSocketChannel.pipeline().addLast(new SimpleChannelInboundHandler<String>() {
+                        //nioSocketChannel.pipeline().addLast(new StringDecoder());
+                        /*nioSocketChannel.pipeline().addLast(new SimpleChannelInboundHandler<String>() {
                             @Override
                             protected void channelRead0(ChannelHandlerContext channelHandlerContext, String s) {
                                 LOGGER.info(s);
                             }
-                        });
-                        nioSocketChannel.pipeline().addLast(new ServerChildHandler());
+                        });*/
+                        nioSocketChannel.pipeline().addLast(new ServerHandler());
                     }
                 });
             ChannelFuture channelFuture = bind(serverBootstrap, 8090);

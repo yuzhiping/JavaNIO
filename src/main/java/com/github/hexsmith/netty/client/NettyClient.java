@@ -16,11 +16,23 @@
 package com.github.hexsmith.netty.client;
 
 import com.github.hexsmith.netty.client.handler.ClientHandler;
+import com.github.hexsmith.netty.client.util.LoginUtils;
+import com.github.hexsmith.netty.protocol.PacketCodeC;
+import com.github.hexsmith.netty.protocol.request.MessageRequestPacket;
+import com.google.common.util.concurrent.ThreadFactoryBuilder;
 
 import java.util.Date;
+import java.util.Scanner;
+import java.util.concurrent.ArrayBlockingQueue;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.ThreadFactory;
+import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
 
 import io.netty.bootstrap.Bootstrap;
+import io.netty.buffer.ByteBuf;
+import io.netty.channel.Channel;
+import io.netty.channel.ChannelFuture;
 import io.netty.channel.ChannelInitializer;
 import io.netty.channel.ChannelOption;
 import io.netty.channel.nio.NioEventLoopGroup;
@@ -36,6 +48,12 @@ import io.netty.util.AttributeKey;
 public class NettyClient {
 
     private static final int MAX_RETRY = 5;
+
+    private static final ThreadFactory NAMED_THREAD_FACTORY = new ThreadFactoryBuilder()
+        .setNameFormat("client-netty-pool-%d").build();
+
+    private static ExecutorService executorService = new ThreadPoolExecutor(1, 1, 60, TimeUnit.SECONDS,
+        new ArrayBlockingQueue<>(256), NAMED_THREAD_FACTORY, new ThreadPoolExecutor.AbortPolicy());
 
     public static void main(String[] args) throws InterruptedException {
         Bootstrap bootstrap = new Bootstrap();
@@ -59,6 +77,9 @@ public class NettyClient {
         bootstrap.connect(host, port).addListener(future -> {
             if (future.isSuccess()) {
                 System.out.println("连接成功!");
+                Channel channel = ((ChannelFuture) future).channel();
+                // 连接成功后，启动控制台线程
+                startConsoleThread(channel);
             } else if (retry == 0) {
                 System.err.println("重试次数已用完，放弃连接！");
             } else {
@@ -69,6 +90,22 @@ public class NettyClient {
                 System.err.println(new Date() + ": 连接失败，第" + order + "次重连……");
                 bootstrap.config().group()
                     .schedule(() -> connect(bootstrap, host, port, retry - 1), delay, TimeUnit.SECONDS);
+            }
+        });
+    }
+
+    private static void startConsoleThread(Channel channel) {
+        executorService.submit(() -> {
+            while (!Thread.interrupted()) {
+                if (LoginUtils.hasLogin(channel)) {
+                    System.out.println("输入消息发送至客户端：");
+                    Scanner scanner = new Scanner(System.in);
+                    String line = scanner.nextLine();
+                    MessageRequestPacket packet = new MessageRequestPacket();
+                    packet.setMessage(line);
+                    ByteBuf byteBuf = PacketCodeC.INSTANCE.encode(channel.alloc(), packet);
+                    channel.writeAndFlush(byteBuf);
+                }
             }
         });
     }

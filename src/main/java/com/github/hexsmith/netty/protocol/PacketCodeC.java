@@ -1,7 +1,9 @@
 package com.github.hexsmith.netty.protocol;
 
 import com.github.hexsmith.netty.protocol.request.LoginRequestPacket;
+import com.github.hexsmith.netty.protocol.request.MessageRequestPacket;
 import com.github.hexsmith.netty.protocol.response.LoginResponsePacket;
+import com.github.hexsmith.netty.protocol.response.MessageResponsePacket;
 import com.github.hexsmith.netty.protocol.support.JOSNSerializer;
 
 import java.util.HashMap;
@@ -29,6 +31,8 @@ public class PacketCodeC {
         PACKET_TYPE_MAP = new HashMap<>(1 << 4);
         PACKET_TYPE_MAP.put(Command.LOGIN_REQUEST, LoginRequestPacket.class);
         PACKET_TYPE_MAP.put(Command.LOGIN_RESPONSE, LoginResponsePacket.class);
+        PACKET_TYPE_MAP.put(Command.MESSAGE_REQUEST, MessageRequestPacket.class);
+        PACKET_TYPE_MAP.put(Command.MESSAGE_RESPONSE, MessageResponsePacket.class);
 
         SERIALIZER_MAP = new HashMap<>(1 << 4);
         Serializer serializer = new JOSNSerializer();

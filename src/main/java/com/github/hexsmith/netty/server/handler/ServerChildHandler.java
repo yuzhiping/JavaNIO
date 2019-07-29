@@ -15,7 +15,7 @@
  */
 package com.github.hexsmith.netty.server.handler;
 
-import java.nio.charset.Charset;
+import java.nio.charset.StandardCharsets;
 import java.time.LocalDateTime;
 
 import org.slf4j.Logger;
@@ -37,14 +37,14 @@ public class ServerChildHandler extends ChannelInboundHandlerAdapter {
     @Override
     public void channelRead(ChannelHandlerContext ctx, Object msg) throws Exception {
         ByteBuf byteBuf = (ByteBuf) msg;
-        LOGGER.info(LocalDateTime.now() + "服务端接收到数据:{}", byteBuf.toString(Charset.forName("utf-8")));
+        LOGGER.info(LocalDateTime.now() + "服务端接收到数据:{}", byteBuf.toString(StandardCharsets.UTF_8));
         System.out.println(LocalDateTime.now() + ": 服务端写出数据");
         ByteBuf out = getByteBuf(ctx);
         ctx.channel().writeAndFlush(out);
     }
 
     private ByteBuf getByteBuf(ChannelHandlerContext ctx) {
-        byte[] bytes = "你好，欢迎学习netty，学习教材参见《闪电侠的博客》!".getBytes(Charset.forName("utf-8"));
+        byte[] bytes = "你好，欢迎学习netty，学习教材参见《闪电侠的博客》!".getBytes(StandardCharsets.UTF_8);
 
         ByteBuf buffer = ctx.alloc().buffer();
 

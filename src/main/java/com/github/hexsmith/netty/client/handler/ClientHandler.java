@@ -15,10 +15,12 @@
  */
 package com.github.hexsmith.netty.client.handler;
 
+import com.github.hexsmith.netty.client.util.LoginUtils;
 import com.github.hexsmith.netty.protocol.AbstractPacket;
 import com.github.hexsmith.netty.protocol.PacketCodeC;
 import com.github.hexsmith.netty.protocol.request.LoginRequestPacket;
 import com.github.hexsmith.netty.protocol.response.LoginResponsePacket;
+import com.github.hexsmith.netty.protocol.response.MessageResponsePacket;
 
 import java.nio.charset.StandardCharsets;
 import java.time.LocalDate;
@@ -63,10 +65,14 @@ public class ClientHandler extends ChannelInboundHandlerAdapter {
         if (packet instanceof LoginResponsePacket) {
             LoginResponsePacket loginResponsePacket = (LoginResponsePacket) packet;
             if (loginResponsePacket.isSuccess()) {
+                LoginUtils.markAsLogin(ctx.channel());
                 LOGGER.info(LocalDateTime.now() + ": 客户端登录成功");
             } else {
                 LOGGER.error(LocalDateTime.now() + "：客户端登录失败，原因：" + loginResponsePacket.getReason());
             }
+        } else if (packet instanceof MessageResponsePacket) {
+            MessageResponsePacket messageResponsePacket = (MessageResponsePacket) packet;
+            LOGGER.info(LocalDateTime.now() + ": 收到客户端消息：" + messageResponsePacket.getMessage());
         }
     }
 
@@ -78,7 +84,7 @@ public class ClientHandler extends ChannelInboundHandlerAdapter {
         loginRequestPacket.setUsername("hexsmith");
         loginRequestPacket.setPassword("root");
         // 编码
-        ByteBuf byteBuf = PacketCodeC.INSTANCE.encode(loginRequestPacket);
+        ByteBuf byteBuf = PacketCodeC.INSTANCE.encode(ctx.alloc(), loginRequestPacket);
         // 写数据
         ctx.channel().writeAndFlush(byteBuf);
     }
