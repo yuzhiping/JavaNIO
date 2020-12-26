@@ -1,8 +1,8 @@
-package com.github.hexsmith.netty.protocol.support;
+package com.github.hexsmith.netty.serialization.support;
 
 import com.alibaba.fastjson.JSON;
-import com.github.hexsmith.netty.protocol.Serializer;
-import com.github.hexsmith.netty.protocol.SerializerAlgorithm;
+import com.github.hexsmith.netty.serialization.Serializer;
+import com.github.hexsmith.netty.serialization.SerializerAlgorithm;
 
 /**
  * @author hexsmith

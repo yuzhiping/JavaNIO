@@ -1,4 +1,4 @@
-package com.github.hexsmith.netty.client.util;
+package com.github.hexsmith.netty.util;
 
 import com.github.hexsmith.netty.protocol.Attributes;
 

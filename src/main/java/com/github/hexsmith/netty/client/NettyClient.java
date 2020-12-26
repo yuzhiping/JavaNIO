@@ -16,9 +16,9 @@
 package com.github.hexsmith.netty.client;
 
 import com.github.hexsmith.netty.client.handler.ClientHandler;
-import com.github.hexsmith.netty.client.util.LoginUtils;
 import com.github.hexsmith.netty.protocol.PacketCodeC;
 import com.github.hexsmith.netty.protocol.request.MessageRequestPacket;
+import com.github.hexsmith.netty.util.LoginUtils;
 import com.google.common.util.concurrent.ThreadFactoryBuilder;
 
 import java.util.Date;

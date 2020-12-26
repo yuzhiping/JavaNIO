@@ -1,6 +1,6 @@
-package com.github.hexsmith.netty.protocol;
+package com.github.hexsmith.netty.serialization;
 
-import com.github.hexsmith.netty.protocol.support.JOSNSerializer;
+import com.github.hexsmith.netty.serialization.support.JOSNSerializer;
 
 /**
  * @author hexsmith

@@ -15,12 +15,12 @@
  */
 package com.github.hexsmith.netty.client.handler;
 
-import com.github.hexsmith.netty.client.util.LoginUtils;
 import com.github.hexsmith.netty.protocol.AbstractPacket;
 import com.github.hexsmith.netty.protocol.PacketCodeC;
 import com.github.hexsmith.netty.protocol.request.LoginRequestPacket;
 import com.github.hexsmith.netty.protocol.response.LoginResponsePacket;
 import com.github.hexsmith.netty.protocol.response.MessageResponsePacket;
+import com.github.hexsmith.netty.util.LoginUtils;
 
 import java.nio.charset.StandardCharsets;
 import java.time.LocalDate;

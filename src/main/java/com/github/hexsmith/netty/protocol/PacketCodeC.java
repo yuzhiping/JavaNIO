@@ -4,7 +4,8 @@ import com.github.hexsmith.netty.protocol.request.LoginRequestPacket;
 import com.github.hexsmith.netty.protocol.request.MessageRequestPacket;
 import com.github.hexsmith.netty.protocol.response.LoginResponsePacket;
 import com.github.hexsmith.netty.protocol.response.MessageResponsePacket;
-import com.github.hexsmith.netty.protocol.support.JOSNSerializer;
+import com.github.hexsmith.netty.serialization.Serializer;
+import com.github.hexsmith.netty.serialization.support.JOSNSerializer;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -52,6 +53,19 @@ public class PacketCodeC {
         byteBuf.writeInt(bytes.length);
         byteBuf.writeBytes(bytes);
         return byteBuf;
+    }
+
+    public void encode(ByteBuf byteBuf, AbstractPacket packet) {
+        // 1. 序列化 java 对象
+        byte[] bytes = Serializer.DEFAULT.serialize(packet);
+
+        // 2. 实际编码过程
+        byteBuf.writeInt(MAGIC_NUMBER);
+        byteBuf.writeByte(packet.getVersion());
+        byteBuf.writeByte(Serializer.DEFAULT.getSerializerAlgorithm());
+        byteBuf.writeByte(packet.getCommand());
+        byteBuf.writeInt(bytes.length);
+        byteBuf.writeBytes(bytes);
     }
 
     public ByteBuf encode(ByteBufAllocator byteBufAllocator, AbstractPacket packet) {

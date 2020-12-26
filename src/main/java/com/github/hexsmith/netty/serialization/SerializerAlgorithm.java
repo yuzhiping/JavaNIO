@@ -1,4 +1,4 @@
-package com.github.hexsmith.netty.protocol;
+package com.github.hexsmith.netty.serialization;
 
 /**
  * 序列化算法
