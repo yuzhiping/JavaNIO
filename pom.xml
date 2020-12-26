@@ -20,7 +20,7 @@
             </roles>
             <email>yuzhiping140103@hotmail.com</email>
             <timezone>+8</timezone>
-            <url>http://hexsmith.tech</url>
+            <url>https://hexsmith.site/</url>
         </developer>
     </developers>
 
@@ -34,7 +34,7 @@
         <dependency>
             <groupId>io.netty</groupId>
             <artifactId>netty-all</artifactId>
-            <version>4.1.42.Final</version>
+            <version>4.1.56.Final</version>
         </dependency>
 
         <dependency>
@@ -46,13 +46,13 @@
         <dependency>
             <groupId>org.slf4j</groupId>
             <artifactId>slf4j-api</artifactId>
-            <version>1.7.25</version>
+            <version>1.7.30</version>
         </dependency>
 
         <dependency>
             <groupId>com.alibaba</groupId>
             <artifactId>fastjson</artifactId>
-            <version>1.2.58</version>
+            <version>1.2.75</version>
         </dependency>
 
         <dependency>
